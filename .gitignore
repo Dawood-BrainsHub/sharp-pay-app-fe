@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+# Local environment files
+.env          # ignore real environment file
+.env.*        # ignore all env variations like .env.development, .env.production etc.
+!.env.sample  # allow sample env to be pushed
 
 # Editor directories and files
 .vscode/*
