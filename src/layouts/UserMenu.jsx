@@ -11,11 +11,15 @@ import {
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../store/features/authSlice";
+import { toast } from "react-toastify";
 
 const UserMenu = ({ user }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -32,8 +36,15 @@ const UserMenu = ({ user }) => {
 
   const handleLogout = () => {
     handleClose();
-    // You can dispatch logout here if using Redux or call a logout function
-    navigate("/login");
+    dispatch(logoutUser())
+      .unwrap()
+      .then(() => {
+        toast.info("Logout Successfully!");
+        navigate("/login");
+      })
+      .catch((err) => {
+        toast.error(err.message || "Login Failed");
+      });
   };
 
   return (

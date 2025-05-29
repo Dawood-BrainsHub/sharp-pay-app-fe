@@ -25,7 +25,7 @@ export const loginUser = createAsyncThunk(
       return rejectWithValue({
         message: err.response?.data?.message || "Login Failed",
         type: err.response?.data?.type || "login",
-        user: err.response?.data?.user
+        user: err.response?.data?.user,
       });
     }
   }
@@ -40,6 +40,19 @@ export const checkAuth = createAsyncThunk(
       return res.data;
     } catch (err) {
       return rejectWithValue(null); // No toast here (silent failure)
+    }
+  }
+);
+
+// Logout User
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axios.post("/auth/logout");
+      return res.data;
+    } catch (err) {
+      return rejectWithValue("Logout failed");
     }
   }
 );
@@ -95,9 +108,14 @@ const authSlice = createSlice({
           message: action.payload?.message || "Something went wrong",
           type: action.payload?.type || "login",
         };
-        state.user = action.payload?.user
+        state.user = action.payload?.user;
       })
-
+      //Logout
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.isAuthenticated = false;
+        state.user = null;
+        state.isCheckAuth = false;
+      })
       // Check Auth
       .addCase(checkAuth.pending, (state) => {
         state.loading = true;

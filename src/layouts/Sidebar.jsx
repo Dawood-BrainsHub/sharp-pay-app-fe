@@ -16,14 +16,18 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import AddCardIcon from '@mui/icons-material/AddCard';
+import AddCardIcon from "@mui/icons-material/AddCard";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../store/features/authSlice";
+import { toast } from "react-toastify";
 
 const drawerWidth = 240;
 
 const Sidebar = ({ open, toggleDrawer }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const menuItems = [
     { text: "Dashboard", icon: <HomeIcon />, path: "/dashboard" },
     { text: "Recipients", icon: <PeopleIcon />, path: "/recipients" },
@@ -31,37 +35,47 @@ const Sidebar = ({ open, toggleDrawer }) => {
     { text: "Banks", icon: <AddCardIcon />, path: "/banks" },
     { text: "Settings", icon: <SettingsIcon />, path: "/settings" },
   ];
-
+  const handleLogout = () => {
+    dispatch(logoutUser())
+      .unwrap()
+      .then(() => {
+        toast.info("Logout Successfully!");
+        navigate("/login");
+      })
+      .catch((err) => {
+        toast.error(err.message || "Login Failed");
+      });
+  };
   return (
     <Drawer
       variant="permanent"
       sx={{
         width: open ? drawerWidth : 60,
         flexShrink: 0,
-        '& .MuiDrawer-paper': {
+        "& .MuiDrawer-paper": {
           width: open ? drawerWidth : 60,
-          boxSizing: 'border-box',
-          transition: 'width 0.3s',
-          overflowX: 'hidden',
-          backgroundColor: '#005c66',
-          color: '#fff',
+          boxSizing: "border-box",
+          transition: "width 0.3s",
+          overflowX: "hidden",
+          backgroundColor: "#005c66",
+          color: "#fff",
         },
       }}
     >
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: open ? 'space-between' : 'center',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: open ? "space-between" : "center",
           p: 2,
         }}
       >
         {open && <Typography variant="h6">Sharp Pay App</Typography>}
-        <IconButton onClick={toggleDrawer} sx={{ color: '#fff' }}>
+        <IconButton onClick={toggleDrawer} sx={{ color: "#fff" }}>
           {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
         </IconButton>
       </Box>
-      <Divider sx={{ borderColor: 'rgba(255,255,255,0.2)' }} />
+      <Divider sx={{ borderColor: "rgba(255,255,255,0.2)" }} />
       <List>
         {menuItems.map((item, index) => (
           <ListItemButton
@@ -70,14 +84,21 @@ const Sidebar = ({ open, toggleDrawer }) => {
             sx={{
               py: 1,
               px: 2,
-              color: '#fff',
-              '&:hover': {
-                backgroundColor: 'primary.main',
-                borderRadius:'8px',
+              color: "#fff",
+              "&:hover": {
+                backgroundColor: "primary.main",
+                borderRadius: "8px",
               },
             }}
           >
-            <ListItemIcon sx={{ color: '#fff', minWidth: 0, mr: open ? 2 : 'auto', justifyContent: 'center' }}>
+            <ListItemIcon
+              sx={{
+                color: "#fff",
+                minWidth: 0,
+                mr: open ? 2 : "auto",
+                justifyContent: "center",
+              }}
+            >
               {item.icon}
             </ListItemIcon>
             {open && <ListItemText primary={item.text} />}
@@ -85,18 +106,28 @@ const Sidebar = ({ open, toggleDrawer }) => {
         ))}
       </List>
       <Box>
-        <Divider sx={{ borderColor: 'rgba(255,255,255,0.2)' }} />
+        <Divider sx={{ borderColor: "rgba(255,255,255,0.2)" }} />
         <List>
-          <ListItemButton sx={{
+          <ListItemButton
+            onClick={handleLogout}
+            sx={{
               py: 1,
               px: 2,
-              color: '#fff',
-              '&:hover': {
-                backgroundColor: 'primary.main',
-                borderRadius:'8px',
+              color: "#fff",
+              "&:hover": {
+                backgroundColor: "primary.main",
+                borderRadius: "8px",
               },
-            }}>
-            <ListItemIcon sx={{ color: '#fff', minWidth: 0, mr: open ? 2 : 'auto', justifyContent: 'center' }}>
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                color: "#fff",
+                minWidth: 0,
+                mr: open ? 2 : "auto",
+                justifyContent: "center",
+              }}
+            >
               <LogoutIcon />
             </ListItemIcon>
             {open && <ListItemText primary="Logout" />}
